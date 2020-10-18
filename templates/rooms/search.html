@@ -1,0 +1,120 @@
+{% extends 'base.html' %} 
+{% block page_title %} Search {% endblock page_title%}
+{% block search_bar %} {% endblock search_bar %} 
+{% block content %}
+
+      <form method="get" action="{% url "rooms:search"%}">
+        {% comment %} <div>
+            <label for="city">City</label>
+            <input value={{city}} id="city" name="city" placeholder="search by city"/>
+        </div>
+        <div>
+            <label for="country">County</label>
+            <select id="country" name="country">
+            
+            {% for country in countries %}
+                <option value={{country.code}} {% if country.code == s_country %} selected {% endif %}>
+                {{country.name}}</option>  
+            {% endfor %}
+                
+            </select>
+        </div>
+        <div>
+            <label for="room_type">Room Type</label>
+            <select id="room_type" name="room_type">
+                    <option value="0" {% if s_room_type == 0 %} selected {% endif %}>Any Kind</option>
+                {% for room_type in room_types %}
+                    <option value={{room_type.pk}} {% if room_type.pk == s_room_type %} selected {% endif %}>{{room_type.name}}</option>  
+                {% endfor %}
+                
+            </select>
+        </div>
+        <div>
+            <label for="price">Price</label>
+            <input type="number" value={{price}} name="price" id="price" placeholder="Price"/>
+        </div>
+        <div>
+            <label for="guests">Guests</label>
+            <input type="number" value={{guests}} name="guests" id="guests" placeholder="Guests"/>
+        </div>
+        <div>
+            <label for="bedrooms">Bedrooms</label>
+            <input type="number" value={{bedrooms}} name="bedrooms" id="bedrooms" placeholder="Bedrooms"/>
+        </div>
+        <div>
+            <label for="beds">Beds</label>
+            <input type="number" value={{beds}} name="beds" id="beds" placeholder="Beds"/>
+        </div>
+        <div>
+            <label for="baths">Baths</label>
+            <input type="number" value={{baths}} name="baths" id="baths" placeholder="Baths"/>
+        </div>
+        <div>
+            <label for="instant_book">Instant Book</label>
+            <input type="checkbox" name="instant_book" id="instant_book" 
+            {% if instant_book == True  %}
+                checked               
+            {% endif %}
+                />
+        </div>
+        <div>
+            <label for="superhost">Superhost</label>
+            <input type="checkbox" name="superhost" id="superhost"
+            {% if superhost == True  %}
+                checked               
+            {% endif %}/>
+        </div>
+        <div>
+            <h3>Amenities</h3>
+            <ul>
+                {% for a in amenities  %}
+                    <li>
+                        <label for="a_{{a.pk}}">{{a.name}}</label>
+                        <input id="a_{{a.pk}}" name="amenities" type="checkbox" value={{a.pk}}
+                        {% if a.pk|slugify in s_amenities %}
+                            checked
+                        {% endif %}>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h3>Facilities</h3>
+            <ul>
+                {% for f in facilities  %}
+                    <li>
+                        <label for="f_{{f.pk}}">{{f.name}}</label>
+                        <input id="f_{{f.pk}}" name="facilities" type="checkbox" value={{f.pk}}
+                        {% if f.pk|slugify in s_facilities %}
+                            checked
+                        {% endif %}>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div> {% endcomment %}
+        {{form.as_p}}
+        <button>search</button>
+      </form>
+
+      <h3> Room Search Result </h3>
+      
+      {% for r in rooms  %}
+
+        <h3><a href="{% url "rooms:detail" r.pk%}"> {{r.name}}</a></h3>
+
+      {% endfor %}
+
+        <h3>page {{rooms.number}} of {{rooms.paginator.num_pages}}</h3>
+
+        {% if rooms.has_previous %}
+        <a href="search?{{urls}}&page={{rooms.previous_page_number}}"> Previous </a>
+        {% endif %}
+        {% for page in rooms.paginator.page_range %}
+
+        <a href="search?{{urls}}&page={{page}}"> {{page}} </a>
+
+        {% endfor %}
+        {% if rooms.has_next %}
+        <a href="search?{{urls}}&page={{rooms.next_page_number}}"> Next </a>
+        {% endif %}
+ {% endblock content %}
