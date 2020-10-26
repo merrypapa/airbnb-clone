@@ -3,9 +3,10 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 # from django.core.paginator import Paginator, EmptyPage
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, View, UpdateView
 from django.core.paginator import Paginator
 from django_countries import countries
+from users import mixins as user_mixins
 from . import models, forms
 
 # from django.http import HttpResponse
@@ -104,6 +105,49 @@ class SearchView(View):
             form = forms.SearchForm()
 
         return render(request, "rooms/search.html", {"form": form})
+
+
+class EditRoomView(user_mixins.LoggedInOnlyView, UpdateView):
+
+    model = models.Room
+    template_name = "rooms/room_edit.html"
+    fields = (
+        "name",
+        "description",
+        "country",
+        "city",
+        "price",
+        "address",
+        "guests",
+        "beds",
+        "bedrooms",
+        "baths",
+        "check_in",
+        "check_out",
+        "instant_book",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
+
+
+class RoomPhotosView(user_mixins.LoggedInOnlyView, DetailView):
+
+    model = models.Room
+    template_name = "rooms/room_photos.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
 
     # ""Search hard coding definition""
     # city = str.capitalize(request.GET.get("city","Anywhere"))
