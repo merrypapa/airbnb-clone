@@ -1,3 +1,3 @@
-# Airbnb Clone
+# Radi MVP
 
-Cloning Airbnb with Python, django, Tailwind and more ....
+MVP project for Radi
